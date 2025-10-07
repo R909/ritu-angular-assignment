@@ -1,0 +1,80 @@
+<div class="content-container">
+
+  <!-- Search bar and Sort button -->
+  <div class="search-bar">
+    <input type="text" class="form-control" placeholder="Search" [(ngModel)]="searchTerm" />
+    <button class="sort-btn" (click)="toggleSort()">Sort</button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- Applied Filter / Total Products Info -->
+    <div class="filter-info">
+      <div class="filter-left">
+        <h5>Applied Filter:</h5>
+        <p class="note">{{ selectedCategory }}</p>
+      </div>
+
+      <div class="filter-center">
+        <h5>Total Products:</h5>
+        <p>{{ filteredCategories().length }}</p>
+      </div>
+
+      <div class="filter-right" *ngIf="selectedCategory">
+        <h5>Cancel Filter 
+          <span (click)="clearFilters()" class="cancel-filter">✕</span>
+        </h5>
+      </div>
+    </div>
+
+    <div class="content-body">
+      <!-- Left Panel -->
+      <div class="left-panel">
+        <h3>Categories</h3>
+        <ul>
+          <li *ngFor="let category of categories">
+            <label class="radio-label">
+              <input
+                type="radio"
+                name="categoryGroup"
+                [value]="category.name"
+                [(ngModel)]="selectedCategory"
+              />
+              {{ category.name }}
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Right Panel (Product List) -->
+      <div class="right-panel">
+        <div *ngIf="filteredCategories().length === 0" class="no-results">
+          No items found.
+        </div>
+
+        <div *ngFor="let item of filteredCategories()" class="reward-card">
+          <img [src]="item.display_img_url || 'assets/placeholder.png'" alt="{{ item.name }}" />
+          <div class="info">
+            <h4>{{ item.name }}</h4>
+            <p>{{ item.points }} Points</p>
+            <p *ngIf="item.quantity === 0" class="out">Out of Stock</p>
+            <p *ngIf="item.quantity && item.quantity <= item.low_quantity && item.quantity > 0" class="high">
+              On High Demand (Only {{ item.quantity }} left)
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sort Panel -->
+  <div class="sort-panel" [class.open]="showSort">
+    <h4>Sort By</h4>
+    <button (click)="sortBy('asc')">Name (A - Z)</button>
+    <button (click)="sortBy('desc')">Name (Z - A)</button>
+    <button class="close-btn" (click)="toggleSort()">Close</button>
+  </div>
+
+  <div  *ngIf="showSort" (click)="toggleSort()"></div>
+</div>
